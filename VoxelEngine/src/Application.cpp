@@ -10,6 +10,7 @@
 #include "Rendering/Shader.h"
 #include "Rendering/VertexArray.h"
 #include "Rendering/VertexBuffer.h"
+#include "Rendering/IndexBuffer.h"
 
 namespace Vox
 {
@@ -64,14 +65,23 @@ namespace Vox
     {
         //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
-        std::array<PosVertex, 3> vertices =
+        std::array<PosVertex, 4> vertices =
         {
             PosVertex{ -0.5f, -0.5f, 0.0f },
-            PosVertex{ 0.5f, -0.5f, 0.0f },
-            PosVertex{ 0.0f,  0.5f, 0.0f }
+            PosVertex{ -0.5f,  0.5f, 0.0f },
+            PosVertex{  0.5f,  0.5f, 0.0f },
+            PosVertex{  0.5f, -0.5f, 0.0f }
+        };
+
+        std::array<GLuint, 6> indices =
+        {
+            0, 1, 2,
+            2, 3, 0
         };
 
         VertexBuffer vb(&vertices, sizeof(vertices));
+        IndexBuffer  ib(&indices, sizeof(indices));
+
         VertexArray vao;
         vao.AddBuffer<PosVertex>(vb);
 
@@ -95,7 +105,8 @@ namespace Vox
             glClear(GL_COLOR_BUFFER_BIT);
 
             vao.Bind();
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            ib.Bind();
+            glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, (GLvoid*)0);
 
             glfwPollEvents();
             if (glfwWindowShouldClose(m_Window))
