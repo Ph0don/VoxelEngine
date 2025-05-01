@@ -7,7 +7,9 @@
 
 #include <array>
 #include "Geometry/Vertex.h"
-#include "Shader.h"
+#include "Rendering/Shader.h"
+#include "Rendering/VertexArray.h"
+#include "Rendering/VertexBuffer.h"
 
 namespace Vox
 {
@@ -36,6 +38,11 @@ namespace Vox
         glfwMakeContextCurrent(m_Window);
         glfwSwapInterval(1);
 
+        glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+            {
+                glViewport(0, 0, width, height);
+            });
+
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         {
             std::cerr << "Failed to initialize OpenGL Context" << std::endl;
@@ -57,26 +64,16 @@ namespace Vox
     {
         //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
-        std::array<Vertex, 3> vertices =
+        std::array<PosVertex, 3> vertices =
         {
-            Vertex{ -0.5f, -0.5f, 0.0f },
-            Vertex{ 0.5f, -0.5f, 0.0f },
-            Vertex{ 0.0f,  0.5f, 0.0f }
+            PosVertex{ -0.5f, -0.5f, 0.0f },
+            PosVertex{ 0.5f, -0.5f, 0.0f },
+            PosVertex{ 0.0f,  0.5f, 0.0f }
         };
 
-        GLuint vertexBuffer;
-        glGenBuffers(1, &vertexBuffer);
-
-        GLuint vertexArray;
-        glGenVertexArrays(1, &vertexArray);
-        glBindVertexArray(vertexArray);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3.0f * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
+        VertexBuffer vb(&vertices, sizeof(vertices));
+        VertexArray vao;
+        vao.AddBuffer<PosVertex>(vb);
 
         std::filesystem::path workingDir;
         if (_DEBUG)
@@ -97,7 +94,7 @@ namespace Vox
         {
             glClear(GL_COLOR_BUFFER_BIT);
 
-            glBindVertexArray(vertexArray);
+            vao.Bind();
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
             glfwPollEvents();
