@@ -12,6 +12,9 @@
 #include "Rendering/VertexBuffer.h"
 #include "Rendering/IndexBuffer.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 namespace Vox
 {
     Application::Application(const AppSpec& spec)
