@@ -6,6 +6,8 @@ set (SOURCES
      src/Application.cpp
      src/Rendering/Shader.h
      src/Rendering/Shader.cpp
+     src/Rendering/Texture.h
+     src/Rendering/Texture.cpp
      src/Rendering/VertexBuffer.h
      src/Rendering/VertexBuffer.cpp
      src/Rendering/IndexBuffer.h
@@ -13,6 +15,10 @@ set (SOURCES
      src/Rendering/VertexArray.h
      src/Rendering/VertexArray.cpp
      src/Geometry/Vertex.h
+     src/Rendering/Renderer.h
+     src/Rendering/Renderer.cpp
+     src/Voxel.h
+     src/Chunk.h
 )
 
 add_executable(VoxelEngine ${SOURCES})

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Rendering/Renderer.h"
+
 struct GLFWwindow;
 
 namespace Vox
@@ -23,6 +25,8 @@ namespace Vox
     private:
         GLFWwindow* m_Window;
         bool m_Running;
+
+        Renderer m_Renderer;
     };
 
 }

@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Vox
 {
 
@@ -40,6 +42,41 @@ namespace Vox
         glUseProgram(0);
     }
 
+    void Shader::SetUniformFloat(const char* name, float val)
+    {
+        GLint loc = GetUniformLocation(name);
+
+        glUniform1f(loc, val);
+    }
+
+    void Shader::SetUniformVec2(const char* name, const glm::vec2& val)
+    {
+        GLint loc = GetUniformLocation(name);
+
+        glUniform2fv(loc, 1, glm::value_ptr(val));
+    }
+
+    void Shader::SetUniformVec3(const char* name, const glm::vec3& val)
+    {
+        GLint loc = GetUniformLocation(name);
+
+        glUniform3fv(loc, 1, glm::value_ptr(val));
+    }
+
+    void Shader::SetUniformVec4(const char* name, const glm::vec4& val)
+    {
+        GLint loc = GetUniformLocation(name);
+
+        glUniform4fv(loc, 1, glm::value_ptr(val));
+    }
+
+    void Shader::SetUniformMat4(const char* name, const glm::mat4& val)
+    {
+        GLint loc = GetUniformLocation(name);
+
+        glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(val));
+    }
+
     std::string Shader::LoadShaderFile(const std::filesystem::path& path)
     {
         std::ifstream file(path, std::ios::ate);
@@ -65,6 +102,17 @@ namespace Vox
         glCompileShader(shader);
 
         return shader;
+    }
+
+    GLint Shader::GetUniformLocation(const char* name) const
+    {
+        if (m_UniformCache.find(name) != m_UniformCache.end())
+            return m_UniformCache[name];
+
+        GLint loc = glGetUniformLocation(m_Program, name);
+        m_UniformCache[name] = loc;
+
+        return loc;
     }
 
 }

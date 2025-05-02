@@ -2,13 +2,18 @@
 
 #include <vector>
 #include <stdexcept>
+#include <glm/glm.hpp>
 
 struct Vertex {};
-struct PosVertex : public Vertex
+struct VoxelVertex : public Vertex
 {
-    float x, y, z;
+    glm::vec3 Position;
+    glm::vec2 UV;
+    glm::vec4 AtlasTransforms;
+    glm::vec2 VoxelTiling;
 
-    PosVertex(float posX, float posY, float posZ) : x(posX), y(posY), z(posZ) {}
+    VoxelVertex(const glm::vec3& pos, const glm::vec2 uv, const glm::vec4& atlasTransforms = glm::vec4(0.0f,0.0f,1.0f,1.0f),
+        const glm::vec2 tiling = glm::vec2(1.0f)) : Position(pos), UV(uv), AtlasTransforms(atlasTransforms), VoxelTiling(tiling) {}
 };
 
 struct VertexAttribute
@@ -34,6 +39,8 @@ struct VertexAttribute
 
         case GL_BYTE: return sizeof(GLbyte);
         case GL_UNSIGNED_BYTE: return sizeof(GLubyte);
+
+        default: return 0;
         }
     }
 };
@@ -88,10 +95,13 @@ public:
     }
 
     template<>
-    static VertexLayout GetLayout<PosVertex>()
+    static VertexLayout GetLayout<VoxelVertex>()
     {
         VertexLayout layout;
         layout.Push<float>(3);
+        layout.Push<float>(2);
+        layout.Push<float>(4);
+        layout.Push<float>(2);
 
         return layout;
     }

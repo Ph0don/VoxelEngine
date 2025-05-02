@@ -8,12 +8,12 @@
 #include <array>
 #include "Geometry/Vertex.h"
 #include "Rendering/Shader.h"
+#include "Rendering/Texture.h"
 #include "Rendering/VertexArray.h"
 #include "Rendering/VertexBuffer.h"
 #include "Rendering/IndexBuffer.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Vox
 {
@@ -53,8 +53,10 @@ namespace Vox
             return;
         }
 
+#if _DEBUG
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
     }
     Application::~Application()
     {
@@ -68,12 +70,12 @@ namespace Vox
     {
         //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
-        std::array<PosVertex, 4> vertices =
+        std::array<VoxelVertex, 4> vertices =
         {
-            PosVertex{ -0.5f, -0.5f, 0.0f },
-            PosVertex{ -0.5f,  0.5f, 0.0f },
-            PosVertex{  0.5f,  0.5f, 0.0f },
-            PosVertex{  0.5f, -0.5f, 0.0f }
+            VoxelVertex{ glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2( 0.f, 0.f),  glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(2.0,1)},
+            VoxelVertex{ glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.f, 0.f),    glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(2.0,1)},
+            VoxelVertex{ glm::vec3(0.5f,  0.5f, 0.0f), glm::vec2(1.f, 1.f),    glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(2.0,1)},
+            VoxelVertex{ glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec2(0.f, 1.f),   glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(2.0,1)},
         };
 
         std::array<GLuint, 6> indices =
@@ -86,7 +88,7 @@ namespace Vox
         IndexBuffer  ib(&indices, sizeof(indices));
 
         VertexArray vao;
-        vao.AddBuffer<PosVertex>(vb);
+        vao.AddBuffer<VoxelVertex>(vb);
 
         std::filesystem::path workingDir;
         if (_DEBUG)
@@ -100,12 +102,39 @@ namespace Vox
 
         std::filesystem::current_path(workingDir);
 
-        Shader shader(workingDir / "res" / "Color.vert", workingDir / "res" / "Color.frag");
+        Shader shader(workingDir / "res" / "shaders" / "Color.vert", workingDir / "res"/ "shaders" / "Color.frag");
         shader.Bind();
+
+        Texture tex(workingDir / "res" / "textures" / "SpriteAtlas.png");
+        tex.Bind();
+
+        auto begTime = std::chrono::high_resolution_clock::now();
+
+        int width = 0, height = 0;
+        glfwGetWindowSize(m_Window, &width, &height);
+
+        glm::mat4 model = glm::scale(glm::identity<glm::mat4>(), glm::vec3(10.0f,5.f,1.f));
+
+        shader.SetUniformMat4("u_Model", model);
+
+        glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 15.0f), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+        shader.SetUniformMat4("u_View", view);
+
+        glm::mat4 proj = glm::perspective(45.0f, width / (float)height, 0.1f, 100.0f);
+        shader.SetUniformMat4("u_Proj", proj);
+
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
 
         while (m_Running)
         {
-            glClear(GL_COLOR_BUFFER_BIT);
+            m_Renderer.StartFrame();
+
+            auto nowTime = std::chrono::high_resolution_clock::now();
+
+            auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - begTime);
+
+            shader.SetUniformFloat("u_col", sinf(milliseconds.count() * 0.01f));
 
             vao.Bind();
             ib.Bind();
@@ -118,6 +147,8 @@ namespace Vox
             }
 
             glfwSwapBuffers(m_Window);
+
+            m_Renderer.EndFrame();
         }
     }
 }
