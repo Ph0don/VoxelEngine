@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Rendering/Renderer.h"
+#include "Utility/AssetTracker.h"
 
 struct GLFWwindow;
 
@@ -22,11 +23,17 @@ namespace Vox
 
         void Run();
 
+        static Application* Get();
+
+        AssetTracker& GetAssetTracker();
+
     private:
         GLFWwindow* m_Window;
         bool m_Running;
 
         Renderer m_Renderer;
+
+        AssetTracker m_AssetTracker;
     };
 
 }

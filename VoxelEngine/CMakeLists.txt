@@ -4,6 +4,8 @@ set (SOURCES
      src/main.cpp
      src/Application.h
      src/Application.cpp
+     src/Utility/AssetTracker.h
+     src/Utility/AssetTracker.cpp
      src/Rendering/Shader.h
      src/Rendering/Shader.cpp
      src/Rendering/Texture.h

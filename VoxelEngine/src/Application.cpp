@@ -17,9 +17,21 @@
 
 namespace Vox
 {
+
+    static Application* s_Instance = nullptr;
+
     Application::Application(const AppSpec& spec)
-        : m_Window(nullptr), m_Running(true)
+        : m_Window(nullptr), m_Running(true), m_Renderer(), m_AssetTracker()
     {
+        if (s_Instance == nullptr)
+        {
+            s_Instance = this;
+        }
+        else
+        {
+            std::cerr << "More than one instance of application running!";
+        }
+
         if (glfwInit() == GLFW_FALSE)
         {
             std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -113,16 +125,6 @@ namespace Vox
         int width = 0, height = 0;
         glfwGetWindowSize(m_Window, &width, &height);
 
-        glm::mat4 model = glm::scale(glm::identity<glm::mat4>(), glm::vec3(10.0f,5.f,1.f));
-
-        shader.SetUniformMat4("u_Model", model);
-
-        glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 15.0f), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
-        shader.SetUniformMat4("u_View", view);
-
-        glm::mat4 proj = glm::perspective(45.0f, width / (float)height, 0.1f, 100.0f);
-        shader.SetUniformMat4("u_Proj", proj);
-
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
@@ -134,7 +136,20 @@ namespace Vox
 
             auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - begTime);
 
-            shader.SetUniformFloat("u_col", sinf(milliseconds.count() * 0.01f));
+            shader.RebuildIfDirty();
+            shader.Bind();
+
+            glm::mat4 model = glm::scale(glm::identity<glm::mat4>(), glm::vec3(10.0f, 5.f, 1.f));
+
+            shader.SetUniformMat4("u_Model", model);
+
+            glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 15.0f), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+            shader.SetUniformMat4("u_View", view);
+
+            glm::mat4 proj = glm::perspective(45.0f, width / (float)height, 0.1f, 100.0f);
+            shader.SetUniformMat4("u_Proj", proj);
+
+            //shader.SetUniformFloat("u_col", sinf(milliseconds.count() * 0.01f));
 
             vao.Bind();
             ib.Bind();
@@ -150,5 +165,13 @@ namespace Vox
 
             m_Renderer.EndFrame();
         }
+    }
+    Application* Application::Get()
+    {
+        return s_Instance;
+    }
+    AssetTracker& Application::GetAssetTracker()
+    {
+        return m_AssetTracker;
     }
 }
