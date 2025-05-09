@@ -7,6 +7,7 @@ namespace Vox
     class IndexBuffer
     {
     public:
+        IndexBuffer() = default;
         IndexBuffer(const void* indices, GLsizeiptr size);
         ~IndexBuffer();
 

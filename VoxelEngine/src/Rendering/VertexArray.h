@@ -16,8 +16,8 @@ namespace Vox
         template<typename T>
         void AddBuffer(const VertexBuffer& buffer);
 
-        void Bind();
-        void Unbind();
+        void Bind() const;
+        void Unbind() const;
 
     private:
         GLuint m_VAO;

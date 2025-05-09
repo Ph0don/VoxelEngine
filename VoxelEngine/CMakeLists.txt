@@ -21,6 +21,11 @@ set (SOURCES
      src/Rendering/Renderer.cpp
      src/Voxel.h
      src/Chunk.h
+     src/Geometry/Mesher.h
+     src/Geometry/NaiveMesher.h
+     src/Geometry/NaiveMesher.cpp
+     src/Geometry/Mesh.h
+     src/Geometry/Mesh.cpp
 )
 
 add_executable(VoxelEngine ${SOURCES})

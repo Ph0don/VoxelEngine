@@ -42,9 +42,9 @@ namespace Vox
             {
                 glDeleteProgram(m_Program);
                 m_Program = program;
+                m_UniformCache.clear();
             }
 
-            m_UniformCache.clear();
             m_Dirty = false;
         }
     }
@@ -90,7 +90,7 @@ namespace Vox
         std::string fragCode = LoadShaderFile(m_FragSource);
 
         GLuint vertShader = CompileShader(vertCode.c_str(), GL_VERTEX_SHADER);
-        if(vertShader == 0)
+        if (vertShader == 0)
         {
             return 0;
         }

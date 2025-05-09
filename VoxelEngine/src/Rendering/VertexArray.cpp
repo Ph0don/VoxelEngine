@@ -12,11 +12,11 @@ namespace Vox
         glDeleteVertexArrays(1, &m_VAO);
     }
 
-    void VertexArray::Bind()
+    void VertexArray::Bind() const
     {
         glBindVertexArray(m_VAO);
     }
-    void VertexArray::Unbind()
+    void VertexArray::Unbind() const
     {
         glBindVertexArray(0);
     }

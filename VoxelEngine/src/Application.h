@@ -31,9 +31,12 @@ namespace Vox
         GLFWwindow* m_Window;
         bool m_Running;
 
-        Renderer m_Renderer;
+        std::unique_ptr<Renderer> m_Renderer;
 
         AssetTracker m_AssetTracker;
+
+        glm::vec3 m_Position;
+        float m_Rotation;
     };
 
 }
