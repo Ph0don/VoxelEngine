@@ -63,7 +63,113 @@ namespace Vox
 
                     glm::vec3 basePos = position + glm::vec3(x * s_VoxelSize, y * s_VoxelSize, z * s_VoxelSize);
 
-                    for (auto vert : s_CubeVerts)
+                    if ((x > 0 && chunk.VoxelData[index - 1] == VoxelType::Air) || x == 0 && surroundingChunks[0].VoxelData[Chunk::s_ChunkSize - 1] == VoxelType::Air)
+                    {
+                        for (int i = 8; i < 12; i++)
+                        {
+                            auto vert = s_CubeVerts[i];
+                            vert.VoxelTiling = glm::vec2(1.0f, 1.0f);
+
+                            float xOffset = ((int)chunk.VoxelData[index] - 1 % tileCount) * tileAtlasRatio;
+                            float yOffset = (tileCount - (int)chunk.VoxelData[index] / tileCount) * tileAtlasRatio;
+
+                            vert.AtlasTransforms = glm::vec4(xOffset, 112 / 128.f, tileAtlasRatio, tileAtlasRatio);
+
+                            vert.Position = basePos + vert.Position * s_VoxelSize;
+
+                            m_Vertices.push_back(vert);
+                        }
+                    }
+                    if ((x < Chunk::s_ChunkSize - 1 && chunk.VoxelData[index + 1] == VoxelType::Air) || x == Chunk::s_ChunkSize - 1 && surroundingChunks[1].VoxelData[0] == VoxelType::Air)
+                    {
+                        for (int i = 12; i < 16; i++)
+                        {
+                            auto vert = s_CubeVerts[i];
+                            vert.VoxelTiling = glm::vec2(1.0f, 1.0f);
+
+                            float xOffset = ((int)chunk.VoxelData[index] - 1 % tileCount) * tileAtlasRatio;
+                            float yOffset = (tileCount - (int)chunk.VoxelData[index] / tileCount) * tileAtlasRatio;
+
+                            vert.AtlasTransforms = glm::vec4(xOffset, 112 / 128.f, tileAtlasRatio, tileAtlasRatio);
+
+                            vert.Position = basePos + vert.Position * s_VoxelSize;
+
+                            m_Vertices.push_back(vert);
+                        }
+                    }
+                    if ((y > 0 && chunk.VoxelData[index - 1] == VoxelType::Air) || y == 0 && surroundingChunks[2].VoxelData[Chunk::s_ChunkSize - 1] == VoxelType::Air)
+                    {
+                        for (int i = 16; i < 20; i++)
+                        {
+                            auto vert = s_CubeVerts[i];
+                            vert.VoxelTiling = glm::vec2(1.0f, 1.0f);
+
+                            float xOffset = ((int)chunk.VoxelData[index] - 1 % tileCount) * tileAtlasRatio;
+                            float yOffset = (tileCount - (int)chunk.VoxelData[index] / tileCount) * tileAtlasRatio;
+
+                            vert.AtlasTransforms = glm::vec4(xOffset, 112 / 128.f, tileAtlasRatio, tileAtlasRatio);
+
+                            vert.Position = basePos + vert.Position * s_VoxelSize;
+
+                            m_Vertices.push_back(vert);
+                        }
+                    }
+
+                    if ((y < Chunk::s_ChunkSize - 1 && chunk.VoxelData[index + 1] == VoxelType::Air) || y == Chunk::s_ChunkSize - 1 && surroundingChunks[3].VoxelData[0] == VoxelType::Air)
+                    {
+                        for (int i = 20; i < 24; i++)
+                        {
+                            auto vert = s_CubeVerts[i];
+                            vert.VoxelTiling = glm::vec2(1.0f, 1.0f);
+
+                            float xOffset = ((int)chunk.VoxelData[index] - 1 % tileCount) * tileAtlasRatio;
+                            float yOffset = (tileCount - (int)chunk.VoxelData[index] / tileCount) * tileAtlasRatio;
+
+                            vert.AtlasTransforms = glm::vec4(xOffset, 112 / 128.f, tileAtlasRatio, tileAtlasRatio);
+
+                            vert.Position = basePos + vert.Position * s_VoxelSize;
+
+                            m_Vertices.push_back(vert);
+                        }
+                    }
+                    if ((z > 0 && chunk.VoxelData[index - 1] == VoxelType::Air) || z == 0 && surroundingChunks[4].VoxelData[Chunk::s_ChunkSize - 1] == VoxelType::Air)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            auto vert = s_CubeVerts[i];
+                            vert.VoxelTiling = glm::vec2(1.0f, 1.0f);
+
+                            float xOffset = ((int)chunk.VoxelData[index] - 1 % tileCount) * tileAtlasRatio;
+                            float yOffset = (tileCount - (int)chunk.VoxelData[index] / tileCount) * tileAtlasRatio;
+
+                            vert.AtlasTransforms = glm::vec4(xOffset, 112 / 128.f, tileAtlasRatio, tileAtlasRatio);
+
+                            vert.Position = basePos + vert.Position * s_VoxelSize;
+
+                            m_Vertices.push_back(vert);
+                        }
+                    }
+                    if ((z < Chunk::s_ChunkSize - 1 && chunk.VoxelData[index + 1] == VoxelType::Air) || z == Chunk::s_ChunkSize - 1 && surroundingChunks[5].VoxelData[0] == VoxelType::Air)
+                    {
+                        for (int i = 4; i < 8; i++)
+                        {
+                            auto vert = s_CubeVerts[i];
+                            vert.VoxelTiling = glm::vec2(1.0f, 1.0f);
+
+                            float xOffset = ((int)chunk.VoxelData[index] - 1 % tileCount) * tileAtlasRatio;
+                            float yOffset = (tileCount - (int)chunk.VoxelData[index] / tileCount) * tileAtlasRatio;
+
+                            vert.AtlasTransforms = glm::vec4(xOffset, 112 / 128.f, tileAtlasRatio, tileAtlasRatio);
+
+                            vert.Position = basePos + vert.Position * s_VoxelSize;
+
+                            m_Vertices.push_back(vert);
+                        }
+                    }
+                    
+
+
+                    /*for (auto vert : s_CubeVerts)
                     {
                         vert.VoxelTiling = glm::vec2(1.0f, 1.0f);
 
@@ -75,7 +181,7 @@ namespace Vox
                         vert.Position = basePos + vert.Position * s_VoxelSize;
                         
                         m_Vertices.push_back(vert);
-                    }
+                    }*/
                 }
             }
         }

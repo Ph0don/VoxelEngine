@@ -85,31 +85,13 @@ namespace Vox
     }
     void Application::Run()
     {
-        //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-
-        std::array<VoxelVertex, 4> vertices =
-        {
-            VoxelVertex{ glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2( 0.f, 0.f),  glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(1.0,1)},
-            VoxelVertex{ glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.f, 0.f),    glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(1.0,1)},
-            VoxelVertex{ glm::vec3(0.5f,  0.5f, 0.0f), glm::vec2(1.f, 1.f),    glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(1.0,1)},
-            VoxelVertex{ glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec2(0.f, 1.f),   glm::vec4(16.0f / 128.f,   112 / 128.f, 16.f / 128.f, 16.f / 128.f), glm::vec2(1.0,1)},
-        };
-
-        std::array<GLuint, 6> indices =
-        {
-            0, 1, 2,
-            2, 3, 0
-        };
 
         std::filesystem::path workingDir;
-        if (_DEBUG)
-        {
+#if defined(_DEBUG)
             workingDir = std::filesystem::current_path() / ".." / ".." / "VoxelEngine";
-        }
-        else
-        {
+#else
             workingDir = std::filesystem::current_path();
-        }
+#endif
 
         std::filesystem::current_path(workingDir);
 
@@ -131,8 +113,6 @@ namespace Vox
         glDepthFunc(GL_LESS);
 
         Chunk chunk(glm::vec3(0.0f), VoxelType::Dirt);
-
-        Mesh mesh(vertices.data(), sizeof(vertices), indices.data(), sizeof(indices));
 
         while (m_Running)
         {
@@ -158,12 +138,12 @@ namespace Vox
 
             //shader.SetUniformFloat("u_col", sinf(milliseconds.count() * 0.01f));
             std::array surroundingChunks = {
-                Chunk(glm::vec3(0.0f), VoxelType::Dirt),
-                Chunk(glm::vec3(0.0f), VoxelType::Dirt),
-                Chunk(glm::vec3(0.0f), VoxelType::Dirt),
-                Chunk(glm::vec3(0.0f), VoxelType::Dirt),
-                Chunk(glm::vec3(0.0f), VoxelType::Dirt),
-                Chunk(glm::vec3(0.0f), VoxelType::Dirt)
+                Chunk(glm::vec3(0.0f), VoxelType::Air),
+                Chunk(glm::vec3(0.0f), VoxelType::Air),
+                Chunk(glm::vec3(0.0f), VoxelType::Air),
+                Chunk(glm::vec3(0.0f), VoxelType::Air),
+                Chunk(glm::vec3(0.0f), VoxelType::Air),
+                Chunk(glm::vec3(0.0f), VoxelType::Air)
             };
 
             if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
@@ -198,16 +178,6 @@ namespace Vox
             {
                 m_Rotation += 0.1f;
             }
-
-
-            mesh.Render();
-            
-            model = glm::translate(model, glm::vec3(0.0f, 2.0f, 0.0f));
-            shader.SetUniformMat4("u_Model", model);
-
-            //glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, (GLvoid*)0);
-            mesh.Render();
-
             
             m_Renderer->RenderChunk(chunk, surroundingChunks);
 

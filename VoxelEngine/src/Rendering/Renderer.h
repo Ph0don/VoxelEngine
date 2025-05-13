@@ -34,7 +34,7 @@ namespace Vox
 
     private:
         static constexpr int s_indicesPerChunk = 8 * 8 * 8 * 6 * 6;
-        void PopulateGenericIndexBuffer(std::array<GLuint, s_indicesPerChunk>& indices);
+        void PopulateGenericIndexBuffer(std::array<GLuint, s_indicesPerChunk>& indices, uint32_t indexCount);
 
     private:
         glm::vec3 m_ClearColor;
